@@ -1,0 +1,11 @@
+pandas
+numpy
+plotly
+dash
+yfinance
+requests
+streamlit
+matplotlib
+torch
+scikit-learn
+tensorflow

@@ -1,0 +1,16 @@
+# virtual environment
+venv/
+dacEnvironment/
+env/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Streamlit cache (optional)
+.streamlit/
+
+# OS files
+.DS_Store
+Thumbs.db
