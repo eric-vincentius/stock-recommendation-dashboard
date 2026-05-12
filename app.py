@@ -1,6 +1,7 @@
 # app.py
 import streamlit as st
 import pandas as pd
+import streamlit.components.v1 as components
 from clustering import *
 from models.clustering import (
     prepare_clustering_data,
@@ -59,6 +60,7 @@ st.markdown("""
 
 </style>
 """, unsafe_allow_html=True)
+
 
 st.markdown("""
 <style>
@@ -232,6 +234,7 @@ CUSTOM ICON
     filter: brightness(0) invert(1);
 }
 
+
 /* =========================
 ICON 1
 ========================= */
@@ -315,6 +318,8 @@ ACTIVE ICON COLOR
 
 </style>
 """, unsafe_allow_html=True)
+
+
 # Load Bootstrap 4 CSS
 st.markdown('<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">', unsafe_allow_html=True)
 
@@ -325,19 +330,60 @@ def load_data():
     summary = pd.read_csv("data/stock_summary.csv")
     return saham_data, latest, summary
 
-saham_data, latest, summary = load_data()
 
-page = st.sidebar.radio(
-    label="",
-    options=[
-        "MARKET OVERVIEW",
-        "HISTORICAL STOCK",
-        "CLUSTERING",
-        "FORECASTING",
-        "INVESTMENT SUMMARY",
-        "TRENDING STOCKS"
-    ]
-)
+
+
+saham_data, latest, summary = load_data()
+with st.sidebar:
+
+    components.html("""
+    <div style="
+        display:flex;
+        align-items:center;
+        gap:20px;
+        padding:20px 10px 30px 10px;
+    ">
+
+        <img 
+            src="https://png.pngtree.com/png-vector/20230318/ourmid/pngtree-data-driven-line-icon-vector-png-image_6656311.png"
+            width="70"
+            color = "white"
+        >
+
+        <div style="
+            width:3px;
+            height:90px;
+            background:white;
+            border-radius:10px;
+        "></div>
+
+        <div style="
+            color:white;
+            font-family:Poppins;
+            font-weight:700;
+            font-size:22px;
+            line-height:1.2;
+            letter-spacing:1px;
+        ">
+            MARKET <br>
+            STOCK <br>
+            DASHBOARD
+        </div>
+
+    </div>
+    """, height=130)
+
+    page = st.radio(
+        "",
+        [
+            "MARKET OVERVIEW",
+            "HISTORICAL STOCK",
+            "CLUSTERING",
+            "FORECASTING",
+            "INVESTMENT SUMMARY",
+            "TRENDING STOCKS"
+        ]
+    )
 
 if page == "MARKET OVERVIEW":
     from pages.market_overview import show
