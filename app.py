@@ -212,31 +212,106 @@ HIDE DEFAULT RADIO DOT
 /* =========================
 CUSTOM ICON
 ========================= */
+/* BASE ICON STYLE */
 .stRadio label::before {
 
     content: "";
 
     width: 24px;
-
     height: 24px;
-
     min-width: 24px;
 
     display: inline-block;
 
     margin-right: 14px;
 
-    background-image:
-    url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDIwNDggMjA0OCI+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTI1NiAxNDA4di0yNTZIMFYwaDE1MzZ2MjU2aDI1NnY1MTJoLTEyOFYzODRIMzg0djg5Nmg3Njh2MTI4em0wLTM4NFYyNTZoMTE1MlYxMjhIMTI4djg5NnptMjU2IDEyOFY4OTZoMTI4djI1NnptMjU2IDBWNjQwaDEyOHY1MTJ6bTI1NiAwVjc2OGgxMjh2Mzg0em02NDAtMjU2cTc5IDAgMTQ5IDMwdDEyMiA4MnQ4MyAxMjN0MzAgMTQ5cTAgODAtMzAgMTQ5dC04MiAxMjJ0LTEyMyA4M3QtMTQ5IDMwcS02MCAwLTExNy0xOHQtMTA1LTUzbC00MzcgNDM2cS0xOSAxOS00NSAxOXQtNDUtMTl0LTE5LTQ1dDE5LTQ1bDQzNi00MzdxLTM1LTQ4LTUzLTEwNXQtMTgtMTE3cTAtNzkgMzAtMTQ5dDgyLTEyMnQxMjItODN0MTUwLTMwbTAgNjQwcTUzIDAgOTktMjB0ODItNTV0NTUtODF0MjAtMTAwcTAtNTMtMjAtOTl0LTU1LTgydC04MS01NXQtMTAwLTIwcS01MyAwLTk5IDIwdC04MiA1NXQtNTUgODF0LTIwIDEwMHEwIDUzIDIwIDk5dDU1IDgydDgxIDU1dDEwMCAyMCIvPjwvc3ZnPg==");
-
     background-size: contain;
-
     background-repeat: no-repeat;
-
     background-position: center;
 
     filter: brightness(0) invert(1);
 }
+
+/* =========================
+ICON 1
+========================= */
+.stRadio > div > label:nth-child(1)::before {
+
+    background-image: url("https://img.icons8.com/ios-filled/50/home.png");
+}
+
+/* =========================
+ICON 2
+========================= */
+.stRadio > div > label:nth-child(2)::before {
+
+    background-image: url("https://img.icons8.com/ios-filled/50/combo-chart.png");
+}
+
+/* =========================
+ICON 3
+========================= */
+.stRadio > div > label:nth-child(3)::before {
+
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDMyIDMyIj48cGF0aCBmaWxsPSIjZmZmIiBkPSJtMjEuMyA0LjlsLTQuNS0yLjdjLS4zLS4xLS41LS4yLS44LS4ycy0uNS4xLS43LjJsLTQuNSAyLjdjLS41LjMtLjguOC0uOCAxLjN2NS42YzAgLjUuMyAxIC43IDEuM2w0LjUgMi43Yy4yLjEuNS4yLjcuMnMuNS0uMS43LS4ybDQuNS0yLjdjLjQtLjMuNy0uNy43LTEuM1Y2LjJjLjItLjUtLjEtMS0uNS0xLjNNMjAgMTEuNWwtNCAyLjRsLTQtMi40di01bDQtMi40bDQgMi40em05LjMgNy40bC00LjUtMi43Yy0uMy0uMS0uNS0uMi0uOC0uMnMtLjUuMS0uNy4ybC00LjUgMi43Yy0uNC4zLS43LjctLjcgMS4zdjUuNmMwIC41LjMgMSAuNyAxLjNsNC41IDIuN2MuMi4xLjUuMi43LjJzLjUtLjEuNy0uMmw0LjUtMi43Yy40LS4zLjctLjcuNy0xLjN2LTUuNmMuMS0uNS0uMi0xLS42LTEuM00yOCAyNS41bC00IDIuNGwtNC0yLjR2LTVsNC0yLjRsNCAyLjR6bS0xNC43LTYuNmwtNC41LTIuN2MtLjMtLjEtLjUtLjItLjgtLjJzLS41LjEtLjcuMmwtNC41IDIuN2MtLjUuMy0uOC44LS44IDEuM3Y1LjZjMCAuNS4zIDEgLjcgMS4zbDQuNSAyLjdjLjMuMS41LjIuOC4ycy41LS4xLjctLjJsNC41LTIuN2MuNC0uMy43LS43LjctMS4zdi01LjZjLjEtLjUtLjItMS0uNi0xLjNNMTIgMjUuNWwtNCAyLjRsLTQtMi40di01bDQtMi40bDQgMi40eiIvPjwvc3ZnPg==");
+}
+
+/* =========================
+ICON 4
+========================= */
+.stRadio > div > label:nth-child(4)::before {
+
+    background-image: url("https://img.icons8.com/ios-filled/50/artificial-intelligence.png");
+}
+
+/* =========================
+ICON 5
+========================= */
+.stRadio > div > label:nth-child(5)::before {
+
+    background-image: url("https://img.icons8.com/ios-filled/50/report-card.png");
+}
+
+/* =========================
+ICON 6
+========================= */
+.stRadio > div > label:nth-child(6)::before {
+
+    background-image: url("https://img.icons8.com/ios-filled/50/fire-element.png");
+}
+
+/* =========================
+ICON HOVER COLOR
+========================= */
+.stRadio label:hover::before {
+
+    filter:
+        brightness(0)
+        saturate(100%)
+        invert(14%)
+        sepia(61%)
+        saturate(1834%)
+        hue-rotate(194deg)
+        brightness(93%)
+        contrast(101%);
+}
+
+/* =========================
+ACTIVE ICON COLOR
+========================= */
+.stRadio input:checked + div label::before {
+
+    filter:
+        brightness(0)
+        saturate(100%)
+        invert(14%)
+        sepia(61%)
+        saturate(1834%)
+        hue-rotate(194deg)
+        brightness(93%)
+        contrast(101%);
+}            
+
 
 </style>
 """, unsafe_allow_html=True)
