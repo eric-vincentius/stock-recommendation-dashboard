@@ -1,4 +1,5 @@
 # app.py
+import base64
 import streamlit as st
 import pandas as pd
 import streamlit.components.v1 as components
@@ -46,20 +47,7 @@ st.markdown("""
 
 <style>
 
-/* =========================
-MAIN BACKGROUND
-========================= */
-.stApp {
 
-    background:
-        linear-gradient(
-            135deg,
-            #355e3b,
-            #5f8d4e,
-            #1f4037
-        );
-
-}
 
 /* =========================
 TOP HEADER
@@ -158,7 +146,7 @@ SIDEBAR BACKGROUND
             #1c3554
         );
 
-    padding-top: 30px;
+    
 
     border-right:
         2px solid rgba(255,255,255,0.08);
@@ -266,9 +254,6 @@ ACTIVE MENU
     font-weight: 900 !important;
 }
 
-/* =========================
-REMOVE RADIO DOT
-========================= */
 
 
 /* =========================
@@ -416,43 +401,48 @@ def load_data():
 saham_data, latest, summary = load_data()
 with st.sidebar:
 
-    components.html("""
-    <div style="
-        display:flex;
-        align-items:center;
-        gap:5px;
-    ">
+    def get_base64(image_path):
 
-       <img 
-    src="https://png.pngtree.com/png-vector/20230318/ourmid/pngtree-data-driven-line-icon-vector-png-image_6656311.png"
-    width="70"
-    style="
-        filter: brightness(0) invert(1);
-    "
->
+        with open(image_path, "rb") as img_file:
 
+            return base64.b64encode(
+                img_file.read()
+            ).decode()
+
+    logo_base64 = get_base64("assets/image.png")
+
+    components.html(
+        f"""
         <div style="
-            width:3px;
-            height:90px;
-            background:white;
-            border-radius:10px;
-        "></div>
+            display:flex;
+            align-items:center;
+            justify-content:flex-start;
 
-        <div style="
-            color:white;
-            font-family:Poppins;
-            font-weight:700;
-            font-size:22px;
-            line-height:1.2;
-            letter-spacing:1px;
+           margin-top:-40px;
+            margin-bottom:-5px;
+
+            padding-left:0px;
         ">
-            MARKET <br>
-            STOCK <br>
-            DASHBOARD
-        </div>
 
-    </div>
-    """, height=130)
+            <img 
+                src="data:image/png;base64,{logo_base64}"
+
+                style="
+                   width:330px;
+
+                    object-fit:contain;
+
+                    filter:
+                        drop-shadow(
+                            0px 4px 12px rgba(yellow, 0.5)
+                        );
+                "
+            >
+
+        </div>
+        """,
+        height=95
+    )
 
     page = st.radio(
         "",
@@ -465,6 +455,8 @@ with st.sidebar:
             "TRENDING STOCKS"
         ]
     )
+
+
 
 if page == "MARKET OVERVIEW":
     from pages.market_overview import show
