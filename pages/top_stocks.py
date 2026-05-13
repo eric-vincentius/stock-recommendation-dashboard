@@ -1,100 +1,153 @@
 import streamlit as st
 import pandas as pd
+import plotly.express as px
+
 
 def show():
-    st.markdown("""
-        <h2 style='color:#FFFFFF;'>
-            Top Trending Stocks
-        </h2>
-        """, unsafe_allow_html=True)
 
-    # Load your data
+    # =========================
+    # CLEAN CSS
+    # =========================
+    st.markdown("""
+    <style>
+
+    .block-container {
+        padding-top: 1.5rem;
+    }
+
+    .main-title {
+        font-size: 32px;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .subtitle {
+        color: #6b7280;
+        margin-bottom: 20px;
+    }
+
+    .card {
+        background: white;
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+    }
+
+    </style>
+    """, unsafe_allow_html=True)
+
+    # =========================
+    # TITLE
+    # =========================
+    st.markdown('<div class="main-title">Trending Stocks</div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitle">Based on news sentiment and attention</div>', unsafe_allow_html=True)
+
+    # =========================
+    # LOAD DATA
+    # =========================
     df = pd.read_csv("data/news.csv")
 
-    # -------------------------
-    # Transform
-    # -------------------------
+    # =========================
+    # TRANSFORM
+    # =========================
     def sentiment_to_score(label):
         return {"negative": -1, "neutral": 0, "positive": 1}.get(label, 0)
 
     df["sentiment_score"] = df["sentiment"].apply(sentiment_to_score)
+
 
     stock_summary = df.groupby("ticker").agg({
         "sentiment_score": "mean",
         "title": "count"
     }).rename(columns={"title": "news_count"}).reset_index()
 
-    # Normalize
     stock_summary["sentiment_norm"] = (stock_summary["sentiment_score"] + 1) / 2
     stock_summary["attention_norm"] = stock_summary["news_count"] / stock_summary["news_count"].max()
 
-    # Final score
     stock_summary["final_score"] = (
         0.6 * stock_summary["sentiment_norm"] +
         0.4 * stock_summary["attention_norm"]
     )
 
-    # Sort
     stock_summary = stock_summary.sort_values("final_score", ascending=False)
 
-    # -------------------------
-    # UI
-    # -------------------------
-    st.markdown("""
-        <p style='color:#FFFFFF;'>
-            Top 10 Trending Stocks
-        </p>
-        """, unsafe_allow_html=True)
+    # =========================
+    # TOP STOCK INSIGHT
+    # =========================
+    top_stock = stock_summary.iloc[0]
 
-    top10 = stock_summary.head(10)
+    st.success(
+        f"🔥 Top Trending: {top_stock['ticker']} "
+        f"(Score: {top_stock['final_score']:.2f}, News: {top_stock['news_count']})"
+    )
 
-    st.markdown("""
-        <style>
-        /* Label (ticker) */
-        [data-testid="stMetricLabel"] {
-            color: #FFFFFF;
-            font-size: 14px;
-        }
+    # =========================
+    # TOP 10 METRICS
+    # =========================
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.subheader("Top 10 Trending Stocks")
 
-        /* Value (score) */
-        [data-testid="stMetricValue"] {
-            color: #FFFF00;
-            font-size: 22px;
-            font-weight: bold;
-        }
+    cols = st.columns(5)
 
-        /* Delta (news) */
-        [data-testid="stMetricDelta"] {
-            color: #FFC107;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-
-    for _, row in top10.iterrows():
-        st.metric(
+    for i, (_, row) in enumerate(stock_summary.head(10).iterrows()):
+        cols[i % 5].metric(
             label=row["ticker"],
-            value=round(row["final_score"], 3),
-            delta=f"News: {row['news_count']}"
+            value=f"{row['final_score']:.2f}",
+            delta=f"{row['news_count']} news"
         )
 
-    # -------------------------
-    # Table
-    # -------------------------
-    st.markdown("""
-        <h2 style='color:#FFFFFF;'>
-            Full Ranking
-        </h2>
-        """, unsafe_allow_html=True)
-    st.dataframe(stock_summary)
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    # -------------------------
-    # Chart
-    # -------------------------
-    st.markdown("""
-        <h2 style='color:#FFFFFF;'>
-            Sentiment vs Attention
-        </h2>
-        """, unsafe_allow_html=True)
-    st.scatter_chart(
-        stock_summary.set_index("ticker")[["sentiment_norm", "attention_norm"]]
+    # =========================
+    # CHART
+    # =========================
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.subheader("Sentiment vs Attention")
+
+    fig = px.scatter(
+        stock_summary,
+        x="sentiment_norm",
+        y="attention_norm",
+        size="final_score",
+        color="final_score",
+        hover_name="ticker",
+        text="ticker",
+        color_continuous_scale="Viridis"
     )
+
+    fig.update_traces(textposition="top center")
+
+    fig.update_layout(
+        height=500,
+        margin=dict(l=10, r=10, t=30, b=10)
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # =========================
+    # TABLE
+    # =========================
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.subheader("Full Ranking")
+
+    stock_summary = stock_summary.drop(columns=["sentiment_norm", "attention_norm"])
+
+    styled_df = (
+        stock_summary.style
+        .format({
+            "final_score": "{:.3f}",
+            "sentiment_norm": "{:.3f}",
+            "attention_norm": "{:.3f}"
+        })
+        .background_gradient(subset=["final_score"], cmap="Greens")
+        .set_properties(**{
+            "text-align": "center",
+            "font-size": "13px"
+        })
+    )
+
+    st.write(styled_df.to_html(), unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
