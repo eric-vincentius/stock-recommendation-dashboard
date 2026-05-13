@@ -8,4 +8,4 @@ streamlit
 matplotlib
 torch
 scikit-learn
-tensorflow
+tensorflow-cpu==2.15.0
