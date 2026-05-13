@@ -74,7 +74,9 @@ def show():
     series = df_stock["Close"]
 
     if len(series) < 50:
-        st.warning("Not enough data for LSTM")
+
+        st.warning(" Not enough data for LSTM")
+
         return
 
     with col2:
@@ -90,12 +92,20 @@ def show():
     if run:
 
         with st.spinner("Training LSTM model..."):
+
             result = train_lstm(series)
 
         if result is None:
-            st.error("Model failed (not enough sequences)")
+
+            st.error(
+                " Model failed (not enough sequences)"
+            )
+
             return
 
+        # =========================
+        # FUTURE FORECAST
+        # =========================
         future = forecast_future(
             result["model"],
             result["last_seq"],
@@ -144,7 +154,7 @@ def show():
         st.markdown('</div>', unsafe_allow_html=True)
 
         # =========================
-        # FUTURE FORECAST
+        # FUTURE DATA
         # =========================
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("Future 120-Day Forecast")

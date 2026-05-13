@@ -51,8 +51,15 @@ def show():
     # =========================
     # TRANSFORM
     # =========================
+    # =========================
+    # TRANSFORM
+    # =========================
     def sentiment_to_score(label):
-        return {"negative": -1, "neutral": 0, "positive": 1}.get(label, 0)
+        return {
+            "negative": -1,
+            "neutral": 0,
+            "positive": 1
+        }.get(label, 0)
 
     df["sentiment_score"] = df["sentiment"].apply(sentiment_to_score)
 
@@ -60,7 +67,9 @@ def show():
     stock_summary = df.groupby("ticker").agg({
         "sentiment_score": "mean",
         "title": "count"
-    }).rename(columns={"title": "news_count"}).reset_index()
+    }).rename(columns={
+        "title": "news_count"
+    }).reset_index()
 
     stock_summary["sentiment_norm"] = (stock_summary["sentiment_score"] + 1) / 2
     stock_summary["attention_norm"] = stock_summary["news_count"] / stock_summary["news_count"].max()

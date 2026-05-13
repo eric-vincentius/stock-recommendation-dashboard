@@ -86,9 +86,11 @@ def show():
     # =========================
     @st.cache_data(ttl=3600)
     def load_data():
+
         saham_data = pd.read_csv("data/saham_data.csv")
         latest = pd.read_csv("data/latest_snapshot.csv")
         summary = pd.read_csv("data/stock_summary.csv")
+
         return saham_data, latest, summary
 
     saham_data, latest, summary = load_data()
@@ -96,7 +98,11 @@ def show():
     # =========================
     # PREPARE CLUSTERING
     # =========================
+    # =========================
+    # PREPARE CLUSTERING
+    # =========================
     df_cluster = prepare_clustering_data(summary)
+
 
     X_scaled, scaler = scale_features(df_cluster)
 
@@ -106,6 +112,22 @@ def show():
         k=3
     )
 
+    df_cluster, kmeans = run_kmeans(
+        df_cluster,
+        X_scaled,
+        k=3
+    )
+
+    profile = get_cluster_profile(
+        df_cluster,
+        kmeans,
+        scaler
+    )
+
+    profile["Label"] = profile.apply(
+        interpret_cluster,
+        axis=1
+    )
     profile = get_cluster_profile(
         df_cluster,
         kmeans,

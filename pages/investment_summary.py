@@ -7,6 +7,7 @@ import plotly.express as px
 # =========================
 def compute_green_score(df):
 
+
     df["NormESG"] = (100 - df["esg"]) / 100
 
     df["NormReturn"] = (
@@ -30,6 +31,10 @@ def compute_green_score(df):
 
     return df
 
+
+# =========================
+# PAGE
+# =========================
 
 # =========================
 # PAGE
@@ -127,7 +132,14 @@ def show():
     df["Stock_Name"] = df["Stock_Name"].str.strip()
     esg_df["Stock_Name"] = esg_df["Stock_Name"].str.strip()
 
-    df = df.merge(esg_df, on="Stock_Name", how="left")
+    # =========================
+    # MERGE
+    # =========================
+    df = df.merge(
+        esg_df,
+        on="Stock_Name",
+        how="left"
+    )
 
     # =========================
     # SCORE
