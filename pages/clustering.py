@@ -35,16 +35,28 @@ def show():
         how="left"
     )
 
-    st.subheader("📍 Cluster Visualization")
+    st.markdown("""
+    <h2 style='color:#FFFFFF;'>
+        Cluster Visualization
+    </h2>
+    """, unsafe_allow_html=True)
 
     st.scatter_chart(
         df_cluster.set_index("Stock_Name")[["Mean_Return", "Risk"]]
     )
 
-    st.subheader("📊 Cluster Profiles")
+    st.markdown("""
+    <h2 style='color:#FFFFFF;'>
+        Cluster Profiles
+    </h2>
+    """, unsafe_allow_html=True)
     st.dataframe(profile)
 
-    st.subheader("📈 Cluster Distribution")
+    st.markdown("""
+    <h2 style='color:#FFFFFF;'>
+        Cluster Distribution
+    </h2>
+    """, unsafe_allow_html=True)
     cluster_counts = df_cluster["Cluster"].value_counts()
     st.bar_chart(cluster_counts)
 

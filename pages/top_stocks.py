@@ -2,7 +2,11 @@ import streamlit as st
 import pandas as pd
 
 def show():
-    st.title("🔥 Top Trending Stocks")
+    st.markdown("""
+        <h2 style='color:#FFFFFF;'>
+            Top Trending Stocks
+        </h2>
+        """, unsafe_allow_html=True)
 
     # Load your data
     df = pd.read_csv("data/news.csv")
@@ -36,9 +40,35 @@ def show():
     # -------------------------
     # UI
     # -------------------------
-    st.subheader("🏆 Top 10 Stocks")
+    st.markdown("""
+        <p style='color:#FFFFFF;'>
+            Top 10 Trending Stocks
+        </p>
+        """, unsafe_allow_html=True)
 
     top10 = stock_summary.head(10)
+
+    st.markdown("""
+        <style>
+        /* Label (ticker) */
+        [data-testid="stMetricLabel"] {
+            color: #FFFFFF;
+            font-size: 14px;
+        }
+
+        /* Value (score) */
+        [data-testid="stMetricValue"] {
+            color: #FFFF00;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        /* Delta (news) */
+        [data-testid="stMetricDelta"] {
+            color: #FFC107;
+        }
+        </style>
+        """, unsafe_allow_html=True)
 
     for _, row in top10.iterrows():
         st.metric(
@@ -50,13 +80,21 @@ def show():
     # -------------------------
     # Table
     # -------------------------
-    st.subheader("📊 Full Ranking")
+    st.markdown("""
+        <h2 style='color:#FFFFFF;'>
+            Full Ranking
+        </h2>
+        """, unsafe_allow_html=True)
     st.dataframe(stock_summary)
 
     # -------------------------
     # Chart
     # -------------------------
-    st.subheader("📈 Sentiment vs Attention")
+    st.markdown("""
+        <h2 style='color:#FFFFFF;'>
+            Sentiment vs Attention
+        </h2>
+        """, unsafe_allow_html=True)
     st.scatter_chart(
         stock_summary.set_index("ticker")[["sentiment_norm", "attention_norm"]]
     )

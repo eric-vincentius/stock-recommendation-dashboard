@@ -7,7 +7,11 @@ def load_data():
     return pd.read_csv("data/saham_data.csv")
 
 def show():
-    st.title("📈 Stock Price Forecast (LSTM)")
+    st.markdown("""
+    <h2 style='color:#FFFFFF;'>
+        Stock Price-Forecasting
+    </h2>
+    """, unsafe_allow_html=True)
 
     df = load_data()
 
@@ -15,8 +19,31 @@ def show():
     df["Date"] = pd.to_datetime(df["Date"])
 
     # Stock selection
+    st.markdown("""
+    <style>
+    .custom-label {
+        color: #9AA0A6;
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+    .custom-title {
+        color: #FFFFFF;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div class="custom-title">Select Stock</div>', unsafe_allow_html=True)
+
+    # Selectbox (label hidden)
     stock_list = df["Stock_Name"].unique()
-    selected_stock = st.selectbox("Select Stock", stock_list)
+    selected_stock = st.selectbox(
+        "",
+        stock_list,
+        label_visibility="collapsed"
+    )
 
     # Filter data
     df_stock = df[df["Stock_Name"] == selected_stock].sort_values("Date")
@@ -33,6 +60,30 @@ def show():
     # =========================
     # TRAIN / PREDICT
     # =========================
+    st.markdown("""
+        <style>
+        [data-testid="stSpinner"] {
+            color: #FFFFFF;
+            font-size: 18px;
+            font-weight: 600;
+        }
+                
+        /* Success box */
+        [data-testid="stAlert"][data-baseweb="notification"][kind="success"] {
+            background-color: #FFFFFF;
+            color: #4CAF50;
+            border-radius: 10px;
+        }
+
+        /* Error box */
+        [data-testid="stAlert"][data-baseweb="notification"][kind="error"] {
+            background-color: #FFFFFF;
+            color: #F44336;
+            border-radius: 10px;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+    
     if st.button("Run Forecast"):
 
         with st.spinner("Training LSTM model..."):
@@ -54,7 +105,11 @@ def show():
         # =========================
         # PLOT HISTORICAL PREDICTION
         # =========================
-        st.subheader("Historical Prediction vs Actual")
+        st.markdown("""
+            <h2 style='color:#FFFFFF;'>
+                Historical Prediction vs Actual
+            </h2>
+            """, unsafe_allow_html=True)
         plot_df = pd.DataFrame({
             "Actual": result["y_test"],
             "Predicted": result["pred"]
@@ -65,7 +120,11 @@ def show():
         # =========================
         # FUTURE FORECAST
         # =========================
-        st.subheader("Future 120-Day Forecast")
+        st.markdown("""
+            <h2 style='color:#FFFFFF;'>
+                Future 120-Day Forecast
+            </h2>
+            """, unsafe_allow_html=True)
         future_df = pd.DataFrame({
             "Forecast": future
         })

@@ -27,7 +27,11 @@ def compute_green_score(df):
     return df
 
 def show():
-    st.title("💼 Investment Summary")
+    st.markdown("""
+        <h2 style='color:#FFFFFF;'>
+            Investment Summary
+        </h2>
+        """, unsafe_allow_html=True)
 
     # =========================
     # LOAD DATA
@@ -50,10 +54,18 @@ def show():
     df = df.merge(esg_df, on="Stock_Name", how="left")
 
     df = compute_green_score(df)
-    st.subheader("Top 10 Recommended Stocks")
+    st.markdown("""
+        <h2 style='color:#FFFFFF;'>
+            Top 10 Recommended Stocks
+        </h2>
+        """, unsafe_allow_html=True)
     st.bar_chart(df.sort_values("Green Score", ascending=False).head(10).set_index("Stock_Name")["Green Score"])
 
-    st.subheader("🌱 Green Score per Stock")
+    st.markdown("""
+        <h2 style='color:#FFFFFF;'>
+            Green Score per Stock
+        </h2>
+        """, unsafe_allow_html=True)
 
     st.dataframe(
         df.sort_values("Green Score", ascending=False)

@@ -6,7 +6,11 @@ import plotly.express as px
 
 def show():
 
-    st.title("Market Overview\n")
+    st.markdown("""
+    <h2 style='color:#FFFFFF;'>
+        Market Overview
+    </h2>
+    """, unsafe_allow_html=True)
 
     # =========================
     # LOAD DATA
@@ -70,29 +74,60 @@ def show():
     # =========================
     # METRICS
     # =========================
+    st.markdown("""
+    <style>
+    .metric-card {
+        background-color: #262730;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+    }
+    .metric-title {
+        color: #FFFFFF;
+        font-size: 14px;
+    }
+    .metric-value {
+        color: #4CAF50;
+        font-size: 24px;
+        font-weight: bold;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
     col1, col2, col3, col4 = st.columns(4)
 
-    col1.metric(
-        "Total Stocks",
-        len(features)
-    )
+    with col1:
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-title">Total Stocks</div>
+            <div class="metric-value">{len(features)}</div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    col2.metric(
-        "Avg Return",
-        round(features["return"].mean(), 4)
-    )
+    with col2:
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-title">Avg Return</div>
+            <div class="metric-value">{round(features["return"].mean(), 4)}</div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    col3.metric(
-        "Avg Risk",
-        round(features["risk"].mean(), 4)
-    )
+    with col3:
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-title">Avg Risk</div>
+            <div class="metric-value">{round(features["risk"].mean(), 4)}</div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    col4.metric(
-        "Avg Volume",
-        int(df["Avg_Volume"].mean())
-    )
-
-    st.markdown("<br>", unsafe_allow_html=True)
+    with col4:
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-title">Avg Volume</div>
+            <div class="metric-value">{int(df["Avg_Volume"].mean())}</div>
+        </div>
+        """, unsafe_allow_html=True)
 
     # =========================
     # ESG CATEGORY
@@ -120,7 +155,11 @@ def show():
     # =========================
     # ESG DISTRIBUTION
     # =========================
-    st.subheader("ESG Risk Distribution")
+    st.markdown("""
+        <h2 style='color:#FFFFFF;'>
+            ESG Risk Distribution
+        </h2>
+        """, unsafe_allow_html=True)
 
     esg_counts = (
         features["ESG_Category"]
@@ -224,7 +263,11 @@ def show():
        # =========================
     # TABLE
     # =========================
-    st.subheader("Stock Ranking")
+    st.markdown("""
+        <h2 style='color:#FFFFFF;'>
+            Stock Ranking
+        </h2>
+        """, unsafe_allow_html=True)
 
     ranking_df = (
         features

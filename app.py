@@ -340,7 +340,7 @@ with st.sidebar:
     <div style="
         display:flex;
         align-items:center;
-        gap:20px;
+        gap:7px;
         padding:20px 10px 30px 10px;
     ">
 
