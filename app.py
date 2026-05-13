@@ -44,7 +44,11 @@ st.markdown("""
 st.markdown("""
 <style>
 
-/* Background utama */
+<style>
+
+/* =========================
+MAIN BACKGROUND
+========================= */
 .stApp {
 
     background:
@@ -56,6 +60,82 @@ st.markdown("""
         );
 
 }
+
+/* =========================
+TOP HEADER
+========================= */
+header {
+
+    background:
+        linear-gradient(
+            135deg,
+            #143d2a,
+            #355e3b,
+            #1c3554
+        ) !important;
+
+    border-bottom:
+        2px solid rgba(255,255,255,0.08);
+
+}
+
+/* STREAMLIT HEADER */
+[data-testid="stHeader"] {
+
+    background:
+        linear-gradient(
+            135deg,
+            #143d2a,
+            #355e3b,
+            #1c3554
+        ) !important;
+
+    backdrop-filter: blur(10px);
+
+}
+
+/* TOOLBAR */
+[data-testid="stToolbar"] {
+
+    right: 2rem;
+
+}
+
+/* DEPLOY BUTTON */
+.stDeployButton button {
+
+    background:
+        rgba(255,255,255,0.12) !important;
+
+    color: white !important;
+
+    border:
+        1px solid rgba(255,255,255,0.18) !important;
+
+    border-radius: 14px !important;
+
+    font-weight: 600 !important;
+
+}
+
+/* HOVER DEPLOY */
+.stDeployButton button:hover {
+
+    background:
+        rgba(255,255,255,0.22) !important;
+
+    color: white !important;
+
+}
+
+/* HIDE STREAMLIT DECORATION */
+[data-testid="stDecoration"] {
+
+    display: none;
+
+}
+
+</style>
 
 
 </style>
@@ -344,11 +424,13 @@ with st.sidebar:
         padding:20px 10px 30px 10px;
     ">
 
-        <img 
-            src="https://png.pngtree.com/png-vector/20230318/ourmid/pngtree-data-driven-line-icon-vector-png-image_6656311.png"
-            width="70"
-            color = "white"
-        >
+       <img 
+    src="https://png.pngtree.com/png-vector/20230318/ourmid/pngtree-data-driven-line-icon-vector-png-image_6656311.png"
+    width="70"
+    style="
+        filter: brightness(0) invert(1);
+    "
+>
 
         <div style="
             width:3px;

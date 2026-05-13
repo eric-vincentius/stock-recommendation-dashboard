@@ -7,6 +7,163 @@ import plotly.express as px
 def show():
 
     st.title("Market Overview\n")
+      # =========================
+    # GRAND DESIGN CSS
+    # =========================
+    st.markdown("""
+    <style>
+
+    /* MAIN BACKGROUND */
+    .stApp {
+
+        background: linear-gradient(
+            135deg,
+            #355e2b,
+            #5d824f
+        ) !important;
+
+    }
+
+    /* MAIN CONTAINER */
+    .main .block-container {
+
+        background: transparent !important;
+
+        padding-top: 2rem;
+
+    }
+
+    /* TITLE */
+    h1 {
+
+        color: white !important;
+
+        font-family: Comic Sans MS !important;
+
+        font-size: 55px !important;
+
+        font-weight: 800 !important;
+
+    }
+
+    /* SUBTITLE */
+    h3 {
+
+        color: white !important;
+
+        font-family: Comic Sans MS !important;
+
+        font-size: 32px !important;
+
+        font-weight: 700 !important;
+
+    }
+
+    /* METRIC CARD */
+    [data-testid="stMetric"] {
+
+        background: #F5F5F5;
+
+        border-radius: 28px;
+
+        padding: 20px;
+
+        border: 4px solid #355E3B;
+
+        box-shadow:
+            0 0 25px rgba(28,53,84,0.25),
+            0 0 35px rgba(144,238,144,0.15);
+
+    }
+
+    /* METRIC LABEL */
+    [data-testid="stMetricLabel"] {
+
+        color: #1F2D1F !important;
+
+        font-size: 18px !important;
+
+        font-weight: 600 !important;
+
+    }
+
+    /* METRIC VALUE */
+    [data-testid="stMetricValue"] {
+
+        color: #234A2E !important;
+
+        font-size: 45px !important;
+
+        font-weight: 700 !important;
+
+    }
+
+    /* CHART */
+    div[data-testid="stPlotlyChart"] {
+
+        background: #f4f4f4;
+
+        border-radius: 35px;
+
+        padding: 10px;
+
+        border: 5px solid #1e4b1d;
+
+        overflow: hidden;
+
+        box-shadow:
+            0 0 25px rgba(0,0,0,0.2),
+            0 0 35px rgba(144,238,144,0.25);
+
+        margin-bottom: 25px;
+
+    }
+
+    /* TABLE */
+    table {
+
+        border-collapse: collapse !important;
+
+        width: 100% !important;
+
+        overflow: hidden;
+
+        border-radius: 25px;
+
+        background: #f4f4f4;
+
+    }
+
+    thead tr th {
+
+        background: #4d7f3f !important;
+
+        color: white !important;
+
+        font-size: 16px !important;
+
+        padding: 14px !important;
+
+        text-align: center !important;
+
+    }
+
+    tbody tr td {
+
+        padding: 12px !important;
+
+        text-align: center !important;
+
+        border-bottom: 1px solid #dddddd !important;
+
+        color: #222 !important;
+
+        font-size: 14px !important;
+
+    }
+
+    </style>
+    """, unsafe_allow_html=True)
 
     # =========================
     # LOAD DATA
