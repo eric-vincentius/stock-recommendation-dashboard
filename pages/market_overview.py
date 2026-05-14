@@ -350,7 +350,7 @@ svg.main-svg {
 
         st.subheader("ESG Risk Distribution")
         st.caption(
-            "Jumlah perusahaan berdasarkan kategori risiko ESG"
+            "Number of companies based on ESG risk category"
         )
 
         fig = px.bar(
@@ -414,11 +414,11 @@ svg.main-svg {
     with right:
 
         st.subheader(
-            "Distribusi Persentase Risiko ESG"
+            "ESG Risk Percentage Distribution"
         )
 
         st.caption(
-            "Persentase total kategori risiko ESG"
+            "Total percentage of ESG risk categories"
         )
 
         pie = go.Figure(
@@ -476,7 +476,7 @@ svg.main-svg {
     st.subheader("Stock Ranking")
 
     st.caption(
-        "Daftar saham berdasarkan score tertinggi"
+        "List of stocks based on highest score"
     )
 
     ranking_df = (

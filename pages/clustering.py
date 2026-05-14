@@ -204,7 +204,7 @@ def show():
     # HEADER
     # =========================
     st.markdown('<div class="main-title">Stock Clustering Analysis</div>', unsafe_allow_html=True)
-    st.markdown('<div class="subtitle">Segmentasi saham berdasarkan return, risk, dan volume</div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitle">Stock segmentation based on return, risk, and volume</div>', unsafe_allow_html=True)
 
     # =========================
     # LOAD DATA
@@ -279,7 +279,7 @@ def show():
             <div class="metric-left" ">
                 <div class="metric-title">Total Stocks</div>
                 <div class="metric-value">{len(df_cluster)}</div>
-                <div class="metric-sub">Saham dianalisis</div>
+                <div class="metric-sub">Stocks are analyzed</div>
             </div>
             <div class="metric-icon icon-green">📈</div>
         </div>
@@ -291,7 +291,7 @@ def show():
             <div class="metric-left">
                 <div class="metric-title">Total Clusters</div>
                 <div class="metric-value">{df_cluster['Cluster'].nunique()}</div>
-                <div class="metric-sub">Cluster terbentuk</div>
+                <div class="metric-sub">Cluster formed</div>
             </div>
             <div class="metric-icon icon-purple">👥</div>
         </div>
@@ -303,7 +303,7 @@ def show():
             <div class="metric-left">
                 <div class="metric-title">Silhouette Score</div>
                 <div class="metric-value">{sil_score:.2f}</div>
-                <div class="metric-sub">Kualitas cluster</div>
+                <div class="metric-sub">Cluster quality</div>
             </div>
             <div class="metric-icon icon-yellow">⭐</div>
         </div>
@@ -342,7 +342,7 @@ def show():
 
     
     st.markdown('<div class="section-title">Cluster Visualization</div>', unsafe_allow_html=True)
-    st.caption("Hover untuk melihat nama saham")
+    st.caption("Hover to see the stock name")
     st.plotly_chart(fig1, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
