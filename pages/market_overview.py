@@ -470,7 +470,6 @@ svg.main-svg {
             pie,
             use_container_width=True
         )
-
     # =========================
     # TABLE
     # =========================
@@ -495,8 +494,175 @@ svg.main-svg {
         ]]
     )
 
-    st.dataframe(
-        ranking_df,
-        use_container_width=True,
-        height=500
+       # =========================
+    # ESG BADGE STYLE
+    # =========================
+    def esg_badge(val):
+
+        colors = {
+            "Negligible Risk": "#22C55E",
+            "Low Risk": "#84CC16",
+            "Moderate Risk": "#EAB308",
+            "High Risk": "#F97316",
+            "Severe Risk": "#EF4444"
+        }
+
+        color = colors.get(val, "#64748B")
+
+        return f"""
+            background:{color};
+            color:#0F172A;
+            padding:50px 50px;
+            border-radius:999px;
+            font-weight:700;
+            text-align:center;
+            display:block;
+            width:30%;
+            margin:auto;
+            font-size:14px;
+        """
+
+    # =========================
+    # STYLED DATAFRAME
+    # =========================
+    styled_df = (
+        ranking_df.style
+
+        # ROW COLORS
+        .apply(
+            lambda x: [
+                "background-color:#F0FDF4;"
+                if x.name % 2 == 0
+                else "background-color:#DCFCE7;"
+                for _ in x
+            ],
+            axis=1
+        )
+
+        # ESG BADGE
+        .map(
+            esg_badge,
+            subset=["ESG_Category"]
+        )
+
+        # FORMAT NUMBER
+        .format({
+            "return": "{:.4f}",
+            "risk": "{:.4f}",
+            "score": "{:.4f}"
+        })
+
+        # TABLE STYLE
+        .set_table_styles([
+
+            # FULL TABLE
+            {
+                "selector": "table",
+                "props": [
+                    ("width", "100%"),
+                    ("min-width", "100%"),
+                    ("border-collapse", "collapse"),
+                    ("table-layout", "auto"),
+                    ("border", "2px solid #12411d"),
+                    ("border-radius", "22px"),
+                    ("overflow", "hidden"),
+                    ("font-family", "Poppins")
+                ]
+            },
+
+            # HEADER
+            {
+                "selector": "thead th",
+                "props": [
+                    ("background-color", "#12411d"),
+                    ("color", "white"),
+                    ("font-size", "16px"),
+                    ("font-weight", "700"),
+                    ("padding", "18px"),
+                    ("text-align", "left"),
+                    ("border", "1px solid #1d5a2b"),
+                    ("white-space", "nowrap")
+                ]
+            },
+
+            # BODY CELL
+            {
+                "selector": "tbody td",
+                "props": [
+                    ("padding", "18px"),
+                    ("font-size", "15px"),
+                    ("color", "#1E293B"),
+                    ("border", "1px solid #BBF7D0"),
+                    ("white-space", "nowrap")
+                ]
+            },
+
+            # INDEX COLUMN
+            {
+                "selector": ".row_heading",
+                "props": [
+                    ("min-width", "70px"),
+                    ("font-weight", "700"),
+                    ("font-size", "15px"),
+                    ("text-align", "center"),
+                    ("background-color", "#F8FAFC"),
+                    ("border", "1px solid #D1D5DB")
+                ]
+            },
+
+            # ESG COLUMN
+            {
+                "selector": "td.col4",
+                "props": [
+                   ("min-width", "240px"),
+                    ("text-align", "center"),
+                    ("vertical-align", "middle"),
+                    ("display", "table-cell"),
+                    ("padding", "14px 24px")
+                ]
+            },
+
+            # STOCK COLUMN
+            {
+                "selector": "td.col0",
+                "props": [
+                    ("min-width", "180px"),
+                    ("font-weight", "600")
+                ]
+            },
+
+            # OTHER COLS
+            {
+                "selector": "td.col1, td.col2, td.col3",
+                "props": [
+                    ("min-width", "120px")
+                ]
+            }
+
+        ])
+    )
+
+    # =========================
+    # FORCE FULL WIDTH
+    # =========================
+    st.markdown("""
+    <style>
+
+    .element-container:has(table) {
+        width:100% !important;
+    }
+
+    table {
+        width:100% !important;
+    }
+
+    </style>
+    """, unsafe_allow_html=True)
+
+    # =========================
+    # SHOW TABLE
+    # =========================
+    st.write(
+        styled_df.to_html(),
+        unsafe_allow_html=True
     )

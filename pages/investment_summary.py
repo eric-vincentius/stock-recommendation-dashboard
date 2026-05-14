@@ -1,14 +1,15 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import math
-
 
 # =========================
 # COMPUTE GREEN SCORE
 # =========================
 def compute_green_score(df):
-    df["NormESG"] = (100 - df["esg"]) / 100
+
+    df["NormESG"] = (
+        100 - df["esg"]
+    ) / 100
 
     df["NormReturn"] = (
         (df["Avg_Return"] - df["Avg_Return"].min()) /
@@ -26,8 +27,13 @@ def compute_green_score(df):
         0.2 * (1 - df["NormRisk"])
     )
 
-    df = df.drop(columns=["NormESG", "NormReturn", "NormRisk"])
-    df = df.drop(columns=["Avg_ATR_Pct", "Worst_Drawdown60"], errors="ignore")
+    df = df.drop(
+        columns=[
+            "NormESG",
+            "NormReturn",
+            "NormRisk"
+        ]
+    )
 
     return df
 
@@ -37,243 +43,513 @@ def compute_green_score(df):
 # =========================
 def show():
 
+    # =========================
+    # CSS
+    # =========================
     st.markdown("""
     <style>
 
-    /* Background */
-    .stApp {
-        background: #f0f2f5;
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+    html, body, [class*="css"] {
+        font-family: 'Poppins', sans-serif;
     }
 
-    /* Page title */
-    .main-title {
-        color: #1e293b;
-        font-size: 28px;
-        font-weight: 800;
-        margin-bottom: 20px;
-        padding-top: 10px;
+    .stApp{
+        background:#F4F6F9;
     }
 
-    /* Card — matches screenshot border */
-    .card {
-        background: white;
-        padding: 16px 20px;
-        border-radius: 12px;
-        border: 1px solid #d1d5db;
-        margin-bottom: 16px;
+    .block-container{
+        padding-top:1.5rem;
+        padding-left:1.5rem;
+        padding-right:1.5rem;
+        max-width:100%;
     }
 
-    .card-title {
-        color: #1e293b;
-        font-size: 15px;
-        font-weight: 700;
-        margin-bottom: 2px;
+    /* =========================
+       TITLE
+    ========================= */
+
+    .main-title{
+        color:#123524;
+        font-size:38px;
+        font-weight:800;
+        margin-bottom:0;
     }
 
-    .card-caption {
-        color: #94a3b8;
-        font-size: 12px;
+    .subtitle{
+        color:#64748B;
+        font-size:15px;
+        margin-bottom:25px;
     }
 
-    /* Plotly chart */
-    div[data-testid="stPlotlyChart"] {
-        background: white;
-        border-radius: 12px;
-        border: 1px solid #d1d5db;
-        padding: 10px;
-        margin-bottom: 16px;
+    /* =========================
+       CARD
+    ========================= */
+
+    .card{
+
+        background:white;
+
+        border:2px solid #12411d;
+
+        border-radius:22px;
+
+        padding:22px;
+
+        box-shadow:
+        0 2px 10px rgba(0,0,0,0.05);
+
+        margin-bottom:22px;
     }
 
-    /* Table card */
-    .table-card {
-        background: white;
-        border-radius: 12px;
-        border: 1px solid #d1d5db;
-        padding: 16px 20px 20px 20px;
-        margin-bottom: 12px;
+    /* =========================
+       SECTION TITLE
+    ========================= */
+
+    .section-title{
+        color:#123524;
+        font-size:22px;
+        font-weight:800;
+        margin-bottom:4px;
     }
 
-    .table-card-title {
-        color: #1e293b;
-        font-size: 15px;
-        font-weight: 700;
-        margin-bottom: 14px;
+    .section-sub{
+        color:#64748B;
+        font-size:13px;
+        margin-bottom:14px;
     }
 
-    /* Table */
-    table {
-        width: 100% !important;
-        border-collapse: collapse;
-        font-size: 12.5px;
+    /* =========================
+       PLOTLY CARD
+    ========================= */
+
+    div[data-testid="stPlotlyChart"]{
+
+        background:white;
+
+        border:2px solid #12411d;
+
+        border-radius:22px;
+
+        padding:18px;
+
+        overflow:hidden;
+
+        box-shadow:
+        0 2px 8px rgba(0,0,0,0.04);
     }
 
-    thead th {
-        background: #f8fafc !important;
-        color: #475569 !important;
-        font-weight: 600 !important;
-        text-align: center !important;
-        padding: 9px 10px !important;
-        border-top: 1px solid #e2e8f0 !important;
-        border-bottom: 1px solid #e2e8f0 !important;
-        white-space: nowrap;
+    /* =========================
+       TABLE
+    ========================= */
+
+    table{
+        width:100% !important;
+        border-collapse:collapse !important;
+        overflow:hidden;
+        border-radius:18px;
+        border:2px solid #12411d;
     }
 
-    tbody td {
-        text-align: center !important;
-        padding: 8px 10px !important;
-        border-bottom: 1px solid #f1f5f9 !important;
-        color: #334155;
+    thead th{
+
+        background:#12411d !important;
+
+        color:white !important;
+
+        font-weight:700 !important;
+
+        text-align:center !important;
+
+        padding:12px !important;
+
+        border:1px solid #d1d5db !important;
     }
 
-    tbody tr:hover td {
-        background: #f9fafb !important;
+    tbody td{
+
+        text-align:center !important;
+
+        padding:10px !important;
+
+        border:1px solid #e5e7eb !important;
+
+        color:#111827 !important;
+
+        font-size:14px !important;
+    }
+
+    tbody th{
+
+        text-align:center !important;
+
+        padding:10px !important;
+
+        border:1px solid #e5e7eb !important;
+
+        background:white !important;
+
+        color:#111827 !important;
+    }
+
+    tbody tr:nth-child(even){
+
+        background:#F8FAFC !important;
+    }
+
+    tbody tr:hover{
+
+        background:#DCFCE7 !important;
+    }
+
+    h3{
+        color:#123524 !important;
+        font-weight:800 !important;
     }
 
     </style>
     """, unsafe_allow_html=True)
 
-    # ── Title ──
-    st.markdown('<div class="main-title">Investment Summary</div>', unsafe_allow_html=True)
+    # =========================
+    # TITLE
+    # =========================
+    st.markdown(
+        '<div class="main-title">Investment Summary</div>',
+        unsafe_allow_html=True
+    )
 
-    # ── Load Data ──
-    df = pd.read_csv("data/stock_summary.csv")
-    esg_df = pd.read_csv("data/esg_score.csv", sep=";")
+    st.markdown(
+        '<div class="subtitle">Top green investment opportunities based on ESG, return and risk</div>',
+        unsafe_allow_html=True
+    )
 
-    esg_df = esg_df.rename(columns={"Saham": "Stock_Name", "ESG Score": "esg"})
-    df["Stock_Name"] = df["Stock_Name"].str.strip()
-    esg_df["Stock_Name"] = esg_df["Stock_Name"].str.strip()
+    # =========================
+    # LOAD DATA
+    # =========================
+    df = pd.read_csv(
+        "data/stock_summary.csv"
+    )
 
-    df = df.merge(esg_df, on="Stock_Name", how="left")
+    esg_df = pd.read_csv(
+        "data/esg_score.csv",
+        sep=";"
+    )
+
+    esg_df = esg_df.rename(columns={
+        "Saham": "Stock_Name",
+        "ESG Score": "esg"
+    })
+
+    df["Stock_Name"] = (
+        df["Stock_Name"].str.strip()
+    )
+
+    esg_df["Stock_Name"] = (
+        esg_df["Stock_Name"].str.strip()
+    )
+
+    # =========================
+    # MERGE
+    # =========================
+    df = df.merge(
+        esg_df,
+        on="Stock_Name",
+        how="left"
+    )
+
+    # =========================
+    # COMPUTE SCORE
+    # =========================
     df = compute_green_score(df)
 
-    top_df = df.sort_values("Green Score", ascending=False).head(10)
+    # =========================
+    # TOP 10
+    # =========================
+    top_df = (
+        df.sort_values(
+            "Green Score",
+            ascending=False
+        )
+        .head(10)
+    )
 
-    # ── Card: section header ──
+    # =====================================================
+    # CHART TITLE CARD
+    # =====================================================
     st.markdown("""
-    <div class="card">
-        <div class="card-title">Top Performing Stocks</div>
-        <div class="card-caption">Green score dihitung berdasarkan ESG, return, dan risiko</div>
-    </div>
+   
+        <div class="section-title">
+            Top Performing Stocks
+        </div>
+
+       
+   
     """, unsafe_allow_html=True)
 
-    # ── Chart ──
+    # =====================================================
+    # BAR CHART
+    # =====================================================
     fig = px.bar(
         top_df,
         x="Stock_Name",
         y="Green Score",
         text_auto=".2f",
         color="Green Score",
+
         color_continuous_scale=[
-            [0.0,  "#c8e6c9"],
-            [0.35, "#81c784"],
-            [0.65, "#388e3c"],
-            [1.0,  "#1b5e20"],
-        ],
+            [0.0, "#C8E6C9"],
+            [0.4, "#66BB6A"],
+            [0.7, "#2E7D32"],
+            [1.0, "#12411d"]
+        ]
     )
 
     fig.update_traces(
         textposition="outside",
-        textfont=dict(size=11.5, color="#334155"),
         marker_line_width=0,
+        textfont=dict(
+            size=12,
+            color="#334155"
+        )
     )
 
     fig.update_layout(
-        height=400,
-        margin=dict(l=40, r=20, t=30, b=40),
+
+        height=500,
+
         paper_bgcolor="white",
         plot_bgcolor="white",
-        font=dict(color="#475569", size=12),
+
+        margin=dict(
+            l=10,
+            r=10,
+            t=10,
+            b=10
+        ),
+
+        font=dict(
+            family="Poppins",
+            color="#1E293B"
+        ),
+
         xaxis=dict(
             title="Stock",
-            tickfont=dict(size=11),
             showgrid=False,
-            linecolor="#e2e8f0",
-            zeroline=False,
+            linecolor="#E5E7EB"
         ),
+
         yaxis=dict(
-            title="Score",
-            showgrid=True,
-            gridcolor="#f1f5f9",
-            linecolor="#e2e8f0",
-            range=[0, top_df["Green Score"].max() * 1.18],
-        ),
-        coloraxis_colorbar=dict(
             title="Green Score",
-            tickformat=".2f",
-            thickness=14,
-            len=0.75,
-            outlinewidth=0,
+            gridcolor="#F1F5F9",
+            linecolor="#E5E7EB"
         ),
+
+        coloraxis_colorbar=dict(
+            title="Score"
+        )
     )
 
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(
+        fig,
+        use_container_width=True
+    )
 
-    # ── Full Ranking — prepare ──
+    # =====================================================
+    # TABLE TITLE
+    # =====================================================
+    st.markdown("""
+    
+        <div class="section-title">
+            Full Ranking
+        </div>
+
+       
+   
+    """, unsafe_allow_html=True)
+
+    # =====================================================
+    # TABLE DATA
+    # =====================================================
     ranking_df = (
-        df.sort_values("Green Score", ascending=False)
+        df.sort_values(
+            "Green Score",
+            ascending=False
+        )
         .reset_index(drop=True)
     )
 
-    # "#" column starts from 0
-    ranking_df.insert(0, "#", range(len(ranking_df)))
+    ranking_df = ranking_df[[
+        "Stock_Name",
+        "Avg_Return",
+        "Return_Volatility",
+        "Avg_Volume",
+        "esg",
+        "Green Score"
+    ]]
 
-    display_cols = ["#", "Stock_Name", "Avg_Return", "Return_Volatility",
-                    "Avg_Volume", "esg", "Green Score"]
-    ranking_df = ranking_df[display_cols].copy()
+    # =====================================================
+    # INDEX DARI 1
+    # =====================================================
+    ranking_df.insert(
+        0,
+        "No",
+        range(1, len(ranking_df) + 1)
+    )
 
-    # ── Pagination state ──
-    ROWS_PER_PAGE = 15
-    total_rows = len(ranking_df)
-    total_pages = math.ceil(total_rows / ROWS_PER_PAGE)
+    ranking_df = ranking_df.round(4)
 
-    if "invest_page" not in st.session_state:
-        st.session_state["invest_page"] = 1
+    # =====================================================
+    # STYLED TABLE
+    # =====================================================
+    ranking_df = ranking_df.reset_index(drop=True)
+    styled_df = (
 
-    current_page = st.session_state["invest_page"]
-    start_idx = (current_page - 1) * ROWS_PER_PAGE
-    end_idx = start_idx + ROWS_PER_PAGE
-    page_df = ranking_df.iloc[start_idx:end_idx]
+        ranking_df.style
+        .hide(axis="index")
 
-    # ── Table card ──
-    st.markdown('<div class="table-card"><div class="table-card-title">Full Ranking</div>', unsafe_allow_html=True)
-
-    styled = (
-        page_df.style
         .format({
             "#": "{}",
             "Avg_Return": "{:.4f}",
             "Return_Volatility": "{:.4f}",
             "Avg_Volume": "{:,.0f}",
             "esg": "{:.6f}",
-            "Green Score": "{:.4f}",
+            "Green Score": "{:.4f}"
         })
-        .background_gradient(subset=["Green Score"], cmap="Greens")
-        .background_gradient(subset=["Avg_Return"], cmap="Blues")
-        .background_gradient(subset=["Return_Volatility"], cmap="Oranges")
-        .set_properties(**{"text-align": "center"})
-        .hide(axis="index")
-    )
 
-    st.write(styled.to_html(), unsafe_allow_html=True)
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    # ── Pagination controls ──
-    col_prev, col_info, col_next = st.columns([1, 3, 1])
-
-    with col_prev:
-        if st.button("← Prev", disabled=(current_page == 1), use_container_width=True):
-            st.session_state["invest_page"] -= 1
-            st.rerun()
-
-    with col_info:
-        st.markdown(
-            f"<div style='text-align:center; color:#64748b; font-size:13px; padding-top:8px;'>"
-            f"Page {current_page} of {total_pages} &nbsp;·&nbsp; {total_rows} stocks</div>",
-            unsafe_allow_html=True,
+        .background_gradient(
+            subset=["Green Score"],
+            cmap="Greens"
         )
 
-    with col_next:
-        if st.button("Next →", disabled=(current_page == total_pages), use_container_width=True):
-            st.session_state["invest_page"] += 1
-            st.rerun()
+        .background_gradient(
+            subset=["Avg_Return"],
+            cmap="Blues"
+        )
+
+        .background_gradient(
+            subset=["Return_Volatility"],
+            cmap="Oranges"
+        )
+
+        .map(
+            lambda v:
+            "color:white; font-weight:700;"
+            if isinstance(v, (int, float)) and v >= 0.75
+            else "color:#111827;",
+            subset=["Green Score"]
+        )
+
+        .set_properties(**{
+            "text-align": "center",
+            "font-size": "14px",
+            "padding": "10px"
+        })
+
+        .set_table_styles([
+
+            {
+                "selector": "table",
+                "props": [
+                    ("width", "100%"),
+                    ("border-collapse", "collapse")
+                ]
+            }
+
+        ])
+    )
+
+    # =====================================================
+    # SHOW TABLE
+    # =====================================================
+    # =====================================================
+    # PAGINATION
+    # =====================================================
+    ROWS_PER_PAGE = 10
+
+    total_rows = len(ranking_df)
+
+    total_pages = (
+        total_rows // ROWS_PER_PAGE
+        + (total_rows % ROWS_PER_PAGE > 0)
+    )
+
+    # =========================
+    # PAGE SELECTOR
+    # =========================
+    page = st.selectbox(
+        "Page to view table data",
+        range(1, total_pages + 1)
+    )
+
+    # =========================
+    # SLICE DATA
+    # =========================
+    start_idx = (page - 1) * ROWS_PER_PAGE
+    end_idx = start_idx + ROWS_PER_PAGE
+
+    page_df = ranking_df.iloc[start_idx:end_idx]
+
+    # =========================
+    # STYLE TABLE
+    # =========================
+    styled_df = (
+
+        page_df.style
+        .hide(axis="index")
+
+        .format({
+            "Avg_Return": "{:.4f}",
+            "Return_Volatility": "{:.4f}",
+            "Avg_Volume": "{:,.0f}",
+            "esg": "{:.6f}",
+            "Green Score": "{:.4f}"
+        })
+
+        .background_gradient(
+            subset=["Green Score"],
+            cmap="Greens"
+        )
+
+        .background_gradient(
+            subset=["Avg_Return"],
+            cmap="Blues"
+        )
+
+        .background_gradient(
+            subset=["Return_Volatility"],
+            cmap="Oranges"
+        )
+
+        .map(
+            lambda v:
+            "color:white; font-weight:700;"
+            if isinstance(v, (int, float)) and v >= 0.75
+            else "color:#111827;",
+            subset=["Green Score"]
+        )
+
+        .set_properties(**{
+            "text-align": "center",
+            "font-size": "14px",
+            "padding": "10px"
+        })
+
+    )
+
+    # =========================
+    # SHOW TABLE
+    # =========================
+    st.write(
+        styled_df.to_html(),
+        unsafe_allow_html=True
+    )
+
+    # =========================
+    # PAGE INFO
+    # =========================
+    st.caption(
+        f"Showing {start_idx + 1} - "
+        f"{min(end_idx, total_rows)} "
+        f"of {total_rows} rows"
+    )

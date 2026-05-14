@@ -233,6 +233,35 @@ def show():
         border-width: 2px;
         
     }
+                
+    /* SEARCH */
+[data-testid="stTextInput"] > div > div {
+    background: white !important;
+    border: 2px solid #12411d !important;
+    border-radius: 16px !important;
+}
+
+/* SELECTBOX */
+[data-testid="stSelectbox"] > div > div {
+    background: white !important;
+    border: 2px solid #12411d !important;
+    border-radius: 16px !important;
+}
+
+/* DATE INPUT */
+[data-testid="stDateInput"] > div > div {
+    background: white !important;
+    border: 2px solid #12411d !important;
+    border-radius: 16px !important;
+}
+
+/* WRAPPER FILTER */
+.filter-wrapper {
+    background: white;
+    border: 2px solid #12411d;
+    border-radius: 20px;
+    padding: 18px;
+}
 
     </style>
     """, unsafe_allow_html=True)
@@ -256,76 +285,97 @@ def show():
     })
 
     all_stocks = sorted(data["Stock_Name"].unique().tolist())
+     # =========================
+    # FILTER SECTION
+    # =========================
+    col_left, col_right = st.columns([1.3, 1])
 
     # =========================
-    # SEARCH + DATE + SELECT ROW
+    # LEFT SIDE
     # =========================
-    col_search, col_date, col_esg = st.columns([3, 2, 1.5])
+    with col_left:
 
-    with col_search:
-        search_query = st.text_input(
-            label="search",
-            placeholder=" Search stock...",
-            label_visibility="collapsed"
-        )
+      
 
-    with col_date:
         today = datetime.today().date()
+
         date_range = st.date_input(
-            label="date_range",
-            value=(today - timedelta(days=365), today),
-            label_visibility="collapsed"
+            "Date Range",
+            value=(today - timedelta(days=365), today)
         )
 
-    # STOCK SELECT — below search
-    filtered_stocks = [s for s in all_stocks if search_query.lower() in s.lower()] if search_query else all_stocks
-    st.markdown("""
-    <style>
-    .stock-select-wrapper {
-        margin-top: 0px;
-    }
-    </style>
+        st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
 
-    <div class="stock-select-wrapper">
-    """, unsafe_allow_html=True)
-
-    col_select, _ = st.columns([3, 2.5])
-
-    col_select, _ = st.columns([3, 2.5])
-    with col_select:
         stock = st.selectbox(
             "Select Stock",
-            filtered_stocks if filtered_stocks else all_stocks
+            all_stocks
         )
+
+        st.markdown("</div>", unsafe_allow_html=True)
 
     # =========================
     # FILTER DATA
     # =========================
     df_stock = data[data["Stock_Name"] == stock].sort_values("Date")
 
-    df_stock = df_stock.merge(esg_data, on="Stock_Name", how="left")
+    df_stock = df_stock.merge(
+        esg_data,
+        on="Stock_Name",
+        how="left"
+    )
 
-    esg_score = round(df_stock["esg"].iloc[0], 2) if not df_stock["esg"].isna().all() else 0.0
+    esg_score = (
+        round(df_stock["esg"].iloc[0], 2)
+        if not df_stock["esg"].isna().all()
+        else 0.0
+    )
 
-    # ESG badge label
+    # =========================
+    # ESG LABEL
+    # =========================
     if esg_score < 20:
         risk_label = "Low Risk"
     elif esg_score < 40:
         risk_label = "Medium Risk"
     else:
         risk_label = "High Risk"
+   # =========================
+    # RIGHT SIDE ESG CARD
+    # =========================
+   # =========================
+    # RIGHT SIDE ESG CARD
+    # =========================
+    with col_right:
+        df_stock = data[data["Stock_Name"] == stock].sort_values("Date")
+        df_stock = df_stock.merge(esg_data, on="Stock_Name", how="left")
+        esg_score = (
+            round(df_stock["esg"].iloc[0], 2)
+            if not df_stock["esg"].isna().all()
+            else 0.0
+        )
 
-    # ESG CARD (top right) — using custom HTML
-    with col_esg:
-        st.markdown(f"""
-        <div class="esg-card" style="border-color:#12411d; box-shadow: 0 4px 18px rgba(18,65,29,0.12); border-width: 3px;">
-            <div class="esg-label">ESG Risk Score</div>
-            <div class="esg-value">{esg_score}</div>
-            <div class="esg-badge">{risk_label}</div>
-            <div class="esg-leaf">🌿</div>
-        </div>
-        """, unsafe_allow_html=True)
+        # ESG badge label
+        if esg_score < 20:
+            risk_label = "Low Risk"
+        elif esg_score < 40:
+            risk_label = "Medium Risk"
+        else:
+            risk_label = "High Risk"
 
+        # ESG CARD (top right) — using custom HTML
+        st.markdown(
+            f"""
+            <div class="esg-card" style="border-color:#12411d; box-shadow: 0 4px 18px rgba(18,65,29,0.12); border-width: 3px;">
+                <div class="esg-label">ESG Risk Score</div>
+                <div class="esg-value">{esg_score}</div>
+                <div class="esg-badge">{risk_label}</div>
+                <div class="esg-leaf">🌿</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+      
+    
     # =========================
     # TIME FILTER BUTTONS
     # =========================
