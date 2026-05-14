@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from sklearn.metrics import silhouette_score
+
 from models.clustering import (
     prepare_clustering_data,
     scale_features,
@@ -10,61 +12,113 @@ from models.clustering import (
 )
 
 # =========================
-# PAGE
+# PAGE CONFIG
+# =========================
+st.set_page_config(
+    page_title="Stock Clustering",
+    layout="wide"
+)
+
+# =========================
+# MAIN PAGE
 # =========================
 def show():
 
     # =========================
-    # CLEAN MODERN CSS
+    # CUSTOM CSS
     # =========================
     st.markdown("""
     <style>
 
-    .block-container {
+    .block-container{
         padding-top: 1.5rem;
+        padding-bottom: 1rem;
+    }
+                  html, body, [class*="css"] {
+        font-family: 'Poppins', sans-serif;
     }
 
-    /* TITLE */
-    .main-title {
-        font-size: 32px;
+    .stApp{
+        background:#F4F6F9;
+    }
+
+    /* MAIN TITLE */
+    .main-title{
+        font-size: 36px;
         font-weight: 700;
-        color: #1f2937;
-        margin-bottom: 10px;
+        color: #111827;
+        margin-bottom: 0px;
     }
 
-    /* SECTION */
-    .section-title {
-        font-size: 20px;
-        font-weight: 600;
-        color: #374151;
-        margin-bottom: 10px;
+    /* SUBTITLE */
+    .subtitle{
+        color: #6b7280;
+        font-size: 15px;
+        margin-bottom: 25px;
     }
 
-    /* CARD */
-    .card {
+
+
+    /* METRIC CARD */
+    .metric-card{
         background: white;
         padding: 20px;
-        border-radius: 16px;
-        box-shadow: 0 4px 18px rgba(0,0,0,0.08);
-        margin-bottom: 20px;
+        border-radius: 18px;
+        border: 1px solid #f3f4f6;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .metric-title{
+        color: #6b7280;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .metric-value{
+        font-size: 32px;
+        font-weight: 700;
+        color: #111827;
+        margin-top: 5px;
+    }
+
+    /* SECTION TITLE */
+    .section-title{
+        font-size: 20px;
+        font-weight: 600;
+        color: #111827;
+        margin-bottom: 12px;
+    }
+
+    /* INFO BOX */
+    .info-box{
+        background: #fafafa;
+        border: 1px solid #eeeeee;
+        padding: 16px;
+        border-radius: 14px;
+        color: #4b5563;
+        font-size: 14px;
     }
 
     /* TABLE */
-    table {
+    table{
         width: 100%;
         border-collapse: collapse;
     }
 
-    thead {
-        background: #f3f4f6;
+    th{
+        background: #f9fafb !important;
+        text-align: center !important;
+        padding: 10px !important;
+        font-size: 13px !important;
     }
 
-    th, td {
-        padding: 10px;
-        text-align: center;
+    td{
+        text-align: center !important;
+        padding: 10px !important;
+        font-size: 13px !important;
     }
 
-    tbody tr:hover {
+    tbody tr:hover{
         background: #f9fafb;
     }
 
@@ -72,14 +126,17 @@ def show():
     """, unsafe_allow_html=True)
 
     # =========================
-    # TITLE
+    # HEADER
     # =========================
     st.markdown(
         '<div class="main-title">Stock Clustering Analysis</div>',
         unsafe_allow_html=True
     )
 
-    st.caption("Segmentasi saham berdasarkan return, risk, dan volume")
+    st.markdown(
+        '<div class="subtitle">Segmentasi saham berdasarkan return, risk, dan volume</div>',
+        unsafe_allow_html=True
+    )
 
     # =========================
     # LOAD DATA
@@ -98,11 +155,7 @@ def show():
     # =========================
     # PREPARE CLUSTERING
     # =========================
-    # =========================
-    # PREPARE CLUSTERING
-    # =========================
     df_cluster = prepare_clustering_data(summary)
-
 
     X_scaled, scaler = scale_features(df_cluster)
 
@@ -112,22 +165,17 @@ def show():
         k=3
     )
 
-    df_cluster, kmeans = run_kmeans(
-        df_cluster,
+    # =========================
+    # SILHOUETTE SCORE
+    # =========================
+    sil_score = silhouette_score(
         X_scaled,
-        k=3
+        df_cluster["Cluster"]
     )
 
-    profile = get_cluster_profile(
-        df_cluster,
-        kmeans,
-        scaler
-    )
-
-    profile["Label"] = profile.apply(
-        interpret_cluster,
-        axis=1
-    )
+    # =========================
+    # CLUSTER PROFILE
+    # =========================
     profile = get_cluster_profile(
         df_cluster,
         kmeans,
@@ -146,6 +194,45 @@ def show():
     )
 
     # =========================
+    # TOP SUMMARY
+    # =========================
+    top1, top2, top3, top4 = st.columns([3, 1, 1, 1])
+
+    with top1:
+        st.markdown("""
+        <div class="card">
+            <div class="info-box">
+                Clustering membantu mengelompokkan saham dengan karakteristik
+                serupa untuk strategi investasi yang lebih tepat.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with top2:
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-title">Total Stocks</div>
+            <div class="metric-value">{len(df_cluster)}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with top3:
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-title">Total Clusters</div>
+            <div class="metric-value">{df_cluster['Cluster'].nunique()}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with top4:
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-title">Silhouette Score</div>
+            <div class="metric-value">{sil_score:.2f}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # =========================
     # SCATTER CHART
     # =========================
     fig1 = px.scatter(
@@ -155,22 +242,42 @@ def show():
         color="Label",
         hover_name="Stock_Name",
         size="Avg_Volume",
+        size_max=30,
         color_discrete_sequence=px.colors.qualitative.Set2
     )
 
     fig1.update_traces(
-        marker=dict(size=12, line=dict(width=0.5, color="#333"))
+        marker=dict(
+            line=dict(
+                width=0.5,
+                color="#333"
+            )
+        )
     )
 
     fig1.update_layout(
-        height=550,
-        margin=dict(l=10, r=10, t=30, b=10)
+        height=500,
+        plot_bgcolor="white",
+        paper_bgcolor="white",
+        margin=dict(l=10, r=10, t=20, b=10),
+        xaxis_title="Mean_Return",
+        yaxis_title="Risk"
     )
 
     st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">Cluster Visualization</div>', unsafe_allow_html=True)
+
+    st.markdown(
+        '<div class="section-title">Cluster Visualization</div>',
+        unsafe_allow_html=True
+    )
+
     st.caption("Hover untuk melihat nama saham")
-    st.plotly_chart(fig1, use_container_width=True)
+
+    st.plotly_chart(
+        fig1,
+        use_container_width=True
+    )
+
     st.markdown('</div>', unsafe_allow_html=True)
 
     # =========================
@@ -194,19 +301,35 @@ def show():
     )
 
     fig2.update_layout(
-        height=400,
+        height=350,
         showlegend=False,
-        margin=dict(l=10, r=10, t=30, b=10)
+        plot_bgcolor="white",
+        paper_bgcolor="white",
+        margin=dict(l=10, r=10, t=20, b=10)
     )
 
     # =========================
-    # PROFILE TABLE (STYLE)
+    # PROFILE TABLE
     # =========================
     styled_profile = (
         profile.style
-        .background_gradient(subset=["Mean_Return"], cmap="Greens")
-        .background_gradient(subset=["Risk"], cmap="Reds")
-        .background_gradient(subset=["Avg_Volume"], cmap="Blues")
+        .background_gradient(
+            subset=["Mean_Return"],
+            cmap="Greens"
+        )
+        .background_gradient(
+            subset=["Risk"],
+            cmap="Reds"
+        )
+        .background_gradient(
+            subset=["Avg_Volume"],
+            cmap="Blues"
+        )
+        .format({
+            "Mean_Return": "{:.6f}",
+            "Risk": "{:.6f}",
+            "Avg_Volume": "{:,.0f}"
+        })
         .set_properties(**{
             "text-align": "center",
             "font-size": "13px"
@@ -214,25 +337,41 @@ def show():
     )
 
     # =========================
-    # SIDE-BY-SIDE SECTION
+    # 2 COLUMN LAYOUT
     # =========================
     col1, col2 = st.columns([2, 1])
 
-    # PROFILE TABLE
+    # LEFT
     with col1:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.markdown('<div class="section-title">Cluster Profiles</div>', unsafe_allow_html=True)
 
-        st.write(styled_profile.to_html(), unsafe_allow_html=True)
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+
+        st.markdown(
+            '<div class="section-title">Cluster Profiles</div>',
+            unsafe_allow_html=True
+        )
+
+        st.write(
+            styled_profile.to_html(),
+            unsafe_allow_html=True
+        )
 
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # DISTRIBUTION CHART
+    # RIGHT
     with col2:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.markdown('<div class="section-title">Distribution</div>', unsafe_allow_html=True)
 
-        st.plotly_chart(fig2, use_container_width=True)
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+
+        st.markdown(
+            '<div class="section-title">Distribution</div>',
+            unsafe_allow_html=True
+        )
+
+        st.plotly_chart(
+            fig2,
+            use_container_width=True
+        )
 
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -244,17 +383,37 @@ def show():
         "Mean_Return",
         "Risk",
         "Avg_Volume",
-        "Label"
+        "Label",
+        "Cluster"
     ]].copy()
 
-    assignment_df["Mean_Return"] = assignment_df["Mean_Return"].round(4)
-    assignment_df["Risk"] = assignment_df["Risk"].round(4)
+    assignment_df["Mean_Return"] = (
+        assignment_df["Mean_Return"]
+        .round(6)
+    )
+
+    assignment_df["Risk"] = (
+        assignment_df["Risk"]
+        .round(6)
+    )
 
     styled_assignment = (
         assignment_df.style
-        .background_gradient(subset=["Mean_Return"], cmap="Greens")
-        .background_gradient(subset=["Risk"], cmap="Reds")
-        .background_gradient(subset=["Avg_Volume"], cmap="Blues")
+        .background_gradient(
+            subset=["Mean_Return"],
+            cmap="Greens"
+        )
+        .background_gradient(
+            subset=["Risk"],
+            cmap="Reds"
+        )
+        .background_gradient(
+            subset=["Avg_Volume"],
+            cmap="Blues"
+        )
+        .format({
+            "Avg_Volume": "{:,.0f}"
+        })
         .set_properties(**{
             "text-align": "center",
             "font-size": "13px"
@@ -262,8 +421,16 @@ def show():
     )
 
     st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">Stock Cluster Assignments</div>', unsafe_allow_html=True)
 
-    st.write(styled_assignment.to_html(), unsafe_allow_html=True)
+    st.markdown(
+        '<div class="section-title">Stock Cluster Assignments</div>',
+        unsafe_allow_html=True
+    )
+
+    st.write(
+        styled_assignment.to_html(),
+        unsafe_allow_html=True
+        
+    )
 
     st.markdown('</div>', unsafe_allow_html=True)

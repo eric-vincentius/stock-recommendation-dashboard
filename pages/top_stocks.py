@@ -10,7 +10,15 @@ def show():
     # =========================
     st.markdown("""
     <style>
+ @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
+    html, body, [class*="css"] {
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .stApp{
+        background:#F4F6F9;
+    }
     .block-container {
         padding-top: 1.5rem;
     }
@@ -28,10 +36,13 @@ def show():
 
     .card {
         background: white;
-        padding: 20px;
-        border-radius: 16px;
-        box-shadow: 0 4px 18px rgba(0,0,0,0.08);
-        margin-bottom: 20px;
+        border: 2px solid #12411d;
+        border-radius: 20px;
+        padding: 20px 22px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
 
     </style>
@@ -87,7 +98,7 @@ def show():
     top_stock = stock_summary.iloc[0]
 
     st.success(
-        f"🔥 Top Trending: {top_stock['ticker']} "
+        f" Top Trending: {top_stock['ticker']} "
         f"(Score: {top_stock['final_score']:.2f}, News: {top_stock['news_count']})"
     )
 
@@ -95,6 +106,8 @@ def show():
     # TOP 10 METRICS
     # =========================
     st.markdown('<div class="card">', unsafe_allow_html=True)
+
+    
     st.subheader("Top 10 Trending Stocks")
 
     cols = st.columns(5)
