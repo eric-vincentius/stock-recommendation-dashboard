@@ -344,7 +344,7 @@ svg.main-svg {
     left, right = st.columns([1.6, 1])
 
     # =========================
-    # BAR CHART
+    # BAR CHART 
     # =========================
     with left:
 
